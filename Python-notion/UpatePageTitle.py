@@ -1,13 +1,20 @@
 import requests
-
 import datetime
-my_date = datetime.date.today() # if date is 01/01/2018
-year, week_num, day_of_week = my_date.isocalendar()
+from datetime import timezone,timedelta
+
+utc_dt = datetime.datetime.utcnow().replace(tzinfo=timezone.utc)
+china_time = utc_dt.astimezone(timezone(timedelta(hours=8)))
+
+year, week_num, day_of_week = china_time.isocalendar()
 print("Week #" + str(week_num) + " of year " + str(year))
 
+timestr = str(china_time.month) + "/" + str(china_time.day) + " "
+timestr += str(china_time.hour) + ":"
+timestr += str(china_time.minute)
 
-import requests
+print(timestr)
 
+#Post the information to notion
 url = "https://api.notion.com/v1/pages/6f47ddad26be47ae9f73e33f4619ee32"
 
 payload = {"properties": {
@@ -15,7 +22,7 @@ payload = {"properties": {
                 "title": [
                     {
                         "text": {
-                            "content": "Personal Home" + " - Week #" + str(week_num)
+                            "content": "Personal Home" + " - Week #" + str(week_num) + "-" + timestr
                         }
                     }
                 ]
@@ -30,4 +37,4 @@ headers = {
 
 response = requests.patch(url, json=payload, headers=headers)
 
-print(response.text)
+print(response.text.encode("utf-8", errors="ignore"))
