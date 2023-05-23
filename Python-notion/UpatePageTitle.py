@@ -22,7 +22,7 @@ payload = {"properties": {
                 "title": [
                     {
                         "text": {
-                            "content": "Personal Home" + " - Week #" + str(week_num) + "-" + timestr
+                            "content": "HomePage" + " - Week #" + str(week_num)
                         }
                     }
                 ]
@@ -35,6 +35,15 @@ headers = {
     "Authorization": "Bearer secret_ys8V5ie6X2czdYF8ULaN4drZyB78CllbHuGSC5kmmT0"
 }
 
-response = requests.patch(url, json=payload, headers=headers)
+while True:
+    try:
+        response = requests.patch(url, json=payload, headers=headers)
+    except Exception:
+        print("continue")
+        continue
 
-print(response.text.encode("utf-8", errors="ignore"))
+    if response.status_code == 200:
+        print(response.text.encode("utf-8", errors="ignore"))
+        break
+    else:
+        print("http err: ", response.status_code)
